@@ -59,7 +59,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .black
+        view.backgroundColor = .white
         navigationController?.setNavigationBarHidden(true, animated: false)
         
         makeItemsViews()
@@ -133,8 +133,8 @@ extension ViewController {
             size: fontSize
         )
         
-        itemView.layer.borderWidth = 3
-        itemView.layer.borderColor = UIColor.white.cgColor
+        itemView.layer.borderWidth = 5
+        itemView.layer.borderColor = UIColor.systemBlue.cgColor
         itemView.layer.cornerRadius = view.frame.height / 40
     }
     
