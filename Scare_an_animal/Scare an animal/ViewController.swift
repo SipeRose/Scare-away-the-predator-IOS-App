@@ -27,7 +27,7 @@ class ViewController: UIViewController {
             "Wolf"
         ],
         "Hogs": [
-            "Angry dog",
+            "Angry Dog",
             "Electro",
             "Siren",
             "Train",

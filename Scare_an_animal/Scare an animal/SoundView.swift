@@ -11,6 +11,9 @@ import AVFoundation
 class SoundView: UIView {
     
     static private var audioPlayer: AVAudioPlayer?
+    static private var soundName = ""
+    static private var tappedSoundView: SoundView?
+    private var nameOfSoundLabel: UILabel!
 
     init() {
         super.init(frame: CGRect())
@@ -45,9 +48,9 @@ extension SoundView {
         
     }
     
-    func addLabel(text: String = "Label") {
+    func addLabel(text: String = "") {
         
-        let nameOfSoundLabel = UILabel()
+        nameOfSoundLabel = UILabel()
         self.addSubview(nameOfSoundLabel)
         nameOfSoundLabel.translatesAutoresizingMaskIntoConstraints = false
         
@@ -56,10 +59,9 @@ extension SoundView {
             nameOfSoundLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor)
         ])
 
-        let fontSize = superview!.bounds.width / 15
         nameOfSoundLabel.font = UIFont(
             name: "Apple Symbols",
-            size: fontSize
+            size: superview!.bounds.width / 15
         )
         nameOfSoundLabel.text = text
         nameOfSoundLabel.textColor = .white
@@ -72,35 +74,71 @@ extension SoundView {
     }
     
     @objc private func pressTheSoundButton() {
+        
+        guard let tappedSV = SoundView.tappedSoundView else {
+            addTapAnimation(newLabelColor: .green)
+            playSound()
+            return
+        }
+        
+        if tappedSV != self {
+            addTapAnimation(newLabelColor: .green)
+            SoundView.stopSound()
+            playSound()
+        } else {
+            addTapAnimation(newLabelColor: .white)
+            SoundView.stopSound()
+        }
+        
+    }
+    
+    private func addTapAnimation(newLabelColor: UIColor) {
         UIView.animate(withDuration: 0.1) {
-            self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            self.transform = CGAffineTransform(
+                scaleX: 0.9,
+                y: 0.9
+            )
         }
         UIView.animate(withDuration: 0.2) {
             self.transform = CGAffineTransform.identity
+            self.nameOfSoundLabel.textColor = newLabelColor
         }
-        
-        playSound()
     }
     
     private func playSound() {
         
-        SoundView.stopSound()
+        SoundView.tappedSoundView = self
+        SoundView.soundName = SoundView.tappedSoundView!.nameOfSoundLabel.text!
         
-        if let label = subviews[1] as? UILabel {
-            let soundName = label.text!
-            if let path = Bundle.main.url(forResource: soundName, withExtension: "mp3") {
-                if let sound = try? AVAudioPlayer(contentsOf: path) {
-                    SoundView.audioPlayer = sound
-                    sound.play()
-                }
+        if let path = Bundle.main.url(forResource: SoundView.soundName, withExtension: "mp3") {
+            if let sound = try? AVAudioPlayer(contentsOf: path) {
+                SoundView.audioPlayer = sound
+                SoundView.audioPlayer!.delegate = self
+                sound.play()
             }
         }
+        
     }
     
     static func stopSound() {
+        
+        SoundView.tappedSoundView?.nameOfSoundLabel.textColor = .white
+        SoundView.tappedSoundView = nil
+        
         guard let _ = SoundView.audioPlayer else { return }
         if SoundView.audioPlayer!.isPlaying {
             SoundView.audioPlayer!.stop()
+            SoundView.soundName = ""
+        }
+        
+    }
+}
+
+extension SoundView: AVAudioPlayerDelegate {
+    
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        if flag {
+            SoundView.stopSound()
         }
     }
     
