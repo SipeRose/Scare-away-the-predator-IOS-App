@@ -48,6 +48,7 @@ class ViewController: UIViewController {
             "Vulture"
         ],
         "Bears": [
+            "Engine",
             "Electro",
             "Screaming Lady",
             "Siren",
