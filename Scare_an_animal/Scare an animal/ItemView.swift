@@ -15,7 +15,7 @@ class ItemView: UIView {
         super.init(frame: CGRect())
         
         self.translatesAutoresizingMaskIntoConstraints = false
-        self.backgroundColor = .white
+        self.backgroundColor = .black
         
         makeLabel(text: textForLabel)
     }
@@ -31,7 +31,7 @@ extension ItemView {
         
         label = UILabel()
         label.text = text
-        label.textColor = .systemBlue
+        label.textColor = .systemGreen
         self.addSubview(label)
         
         label.translatesAutoresizingMaskIntoConstraints = false

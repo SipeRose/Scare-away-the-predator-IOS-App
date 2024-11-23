@@ -64,7 +64,7 @@ extension SoundView {
             size: superview!.bounds.width / 15
         )
         nameOfSoundLabel.text = text
-        nameOfSoundLabel.textColor = .white
+        nameOfSoundLabel.textColor = .black
         
     }
     
@@ -76,17 +76,17 @@ extension SoundView {
     @objc private func pressTheSoundButton() {
         
         guard let tappedSV = SoundView.tappedSoundView else {
-            addTapAnimation(newLabelColor: .green)
+            addTapAnimation(newLabelColor: .systemRed)
             playSound()
             return
         }
         
         if tappedSV != self {
-            addTapAnimation(newLabelColor: .green)
+            addTapAnimation(newLabelColor: .systemRed)
             SoundView.stopSound()
             playSound()
         } else {
-            addTapAnimation(newLabelColor: .white)
+            addTapAnimation(newLabelColor: .black)
             SoundView.stopSound()
         }
         
@@ -122,7 +122,7 @@ extension SoundView {
     
     static func stopSound() {
         
-        SoundView.tappedSoundView?.nameOfSoundLabel.textColor = .white
+        SoundView.tappedSoundView?.nameOfSoundLabel.textColor = .black
         SoundView.tappedSoundView = nil
         
         guard let _ = SoundView.audioPlayer else { return }
