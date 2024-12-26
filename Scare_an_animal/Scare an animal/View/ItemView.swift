@@ -10,6 +10,7 @@ import UIKit
 class ItemView: UIView {
     
     var label: UILabel!
+
     
     init(textForLabel: String) {
         super.init(frame: CGRect())
@@ -19,6 +20,7 @@ class ItemView: UIView {
         
         makeLabel(text: textForLabel)
     }
+    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -33,12 +35,14 @@ extension ItemView {
         label.text = text
         label.textColor = .systemGreen
         self.addSubview(label)
-        
+        label.translatesAutoresizingMaskIntoConstraints = false
+        /*
         label.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             label.centerXAnchor.constraint(equalTo: self.centerXAnchor),
             label.centerYAnchor.constraint(equalTo: self.centerYAnchor)
         ])
+        */
     }
     
 }

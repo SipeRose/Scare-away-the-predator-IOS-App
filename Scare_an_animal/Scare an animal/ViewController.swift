@@ -9,60 +9,15 @@ import UIKit
 
 class ViewController: UIViewController {
     
-    private let tracksForEveryDanger: [String: [String]] = [
-        "Man": [
-            "Angry Dog",
-            "Aztec",
-            "Electro",
-            "Growling",
-            "Police 1",
-            "Police 2",
-            "Screaming Lady",
-            "Shot 1",
-            "Shots 1",
-            "Shots 2",
-            "Siren",
-            "Train",
-            "Ultrasound",
-            "Wolf"
-        ],
-        "Hogs": [
-            "Angry Dog",
-            "Electro",
-            "Siren",
-            "Train",
-            "Wolf"
-        ],
-        "Dogs": [
-            "Electro",
-            "Siren",
-            "Stun gun 1",
-            "Stun gun 2",
-            "Train",
-            "Ultrasound 1",
-            "Ultrasound 2",
-            "Ultrasound 3"
-        ],
-        "Birds": [
-            "Ultrasound for bird",
-            "Vulture"
-        ],
-        "Bears": [
-            "Engine",
-            "Electro",
-            "Screaming Lady",
-            "Siren",
-            "Train",
-            "Ultrasound"
-        ]
-    ]
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    var scrollView: UIScrollView!
+    
+    override func loadView() {
+        super.loadView()
         
         view.backgroundColor = .black
         navigationController?.setNavigationBarHidden(true, animated: false)
         
+        addScrollView()
         makeItemsViews()
         makeTapGestureRecognizer()
     }
@@ -71,59 +26,78 @@ class ViewController: UIViewController {
 
 extension ViewController {
     
+    private func addScrollView() {
+        scrollView = UIScrollView(
+            frame: CGRect(
+                x: 0,
+                y: 0,
+                width: view.bounds.width,
+                height: view.bounds.height
+            )
+        )
+        scrollView.contentSize = CGSize(
+            width: view.bounds.width,
+            height: 5 * (view.frame.width * 1.2 / 3) + 6 * (view.frame.width / 30)
+        )
+        scrollView.backgroundColor = .white
+        view.addSubview(scrollView)
+    }
+    
     private func makeItemsViews() {
         
-        let bufferSize = view.frame.height / 60
+        let enemies = ["Man", "Dogs", "Bears", "Birds", "Hogs"]
         
-        let peopleView = ItemView(textForLabel: "Man")
-        view.addSubview(peopleView)
-        makeFontAndItemViewLayer(itemView: peopleView)
-        NSLayoutConstraint.activate([
-            peopleView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            peopleView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5),
-            peopleView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -5),
-            peopleView.heightAnchor.constraint(equalToConstant: view.frame.height / 10)
-        ])
+        for (index, enemy) in enemies.enumerated() {
+            
+            let itemView = ItemView(textForLabel: enemy)
+            scrollView.addSubview(itemView)
+            makeFontAndItemViewLayer(itemView: itemView)
+            NSLayoutConstraint.activate([
+                itemView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.frame.width / 20),
+                itemView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.frame.width / 20),
+                itemView.heightAnchor.constraint(equalToConstant: view.frame.width * 1.2 / 3),
+            ])
+            if index == 0 {
+                NSLayoutConstraint.activate([
+                    itemView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: view.frame.width / 30)
+                ])
+            } else {
+                let lastSubview = scrollView.subviews[index - 1]
+                NSLayoutConstraint.activate([
+                    itemView.topAnchor.constraint(equalTo: lastSubview.bottomAnchor, constant: view.frame.width / 30)
+                ])
+                
+            }
+            let imageView = UIImageView()
+            itemView.addSubview(imageView)
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                imageView.topAnchor.constraint(equalTo: itemView.topAnchor, constant: view.frame.width / 20),
+                imageView.leadingAnchor.constraint(equalTo: itemView.leadingAnchor, constant: view.frame.width / 20),
+                imageView.bottomAnchor.constraint(equalTo: itemView.bottomAnchor, constant: -view.frame.width / 20),
+                imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor)
+            ])
+            imageView.image = UIImage(named: "Logo")
+            
+            NSLayoutConstraint.activate([
+                itemView.label.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: view.frame.width / 5),
+                itemView.label.topAnchor.constraint(equalTo: imageView.topAnchor)
+            ])
+            
+            let descriptionLabel = UILabel()
+            itemView.addSubview(descriptionLabel)
+            descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                descriptionLabel.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: view.frame.width / 20),
+                descriptionLabel.trailingAnchor.constraint(equalTo: itemView.trailingAnchor, constant: -view.frame.width / 20),
+                descriptionLabel.topAnchor.constraint(equalTo: itemView.label.bottomAnchor),
+                descriptionLabel.bottomAnchor.constraint(equalTo: itemView.bottomAnchor, constant: -view.frame.width / 20)
+            ])
+            descriptionLabel.text = "Hello\nHello\nHello\nHello\n"
+            descriptionLabel.textColor = .green
+            descriptionLabel.numberOfLines = 0
+        }
         
-        let dogsView = ItemView(textForLabel: "Dogs")
-        view.addSubview(dogsView)
-        makeFontAndItemViewLayer(itemView: dogsView)
-        NSLayoutConstraint.activate([
-            dogsView.topAnchor.constraint(equalTo: peopleView.bottomAnchor, constant: bufferSize),
-            dogsView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5),
-            dogsView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -5),
-            dogsView.heightAnchor.constraint(equalToConstant: view.frame.height / 10)
-        ])
-        
-        let bearsView = ItemView(textForLabel: "Bears")
-        view.addSubview(bearsView)
-        makeFontAndItemViewLayer(itemView: bearsView)
-        NSLayoutConstraint.activate([
-            bearsView.topAnchor.constraint(equalTo: dogsView.bottomAnchor, constant: bufferSize),
-            bearsView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5),
-            bearsView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -5),
-            bearsView.heightAnchor.constraint(equalToConstant: view.frame.height / 10)
-        ])
-        
-        let birdsView = ItemView(textForLabel: "Birds")
-        view.addSubview(birdsView)
-        makeFontAndItemViewLayer(itemView: birdsView)
-        NSLayoutConstraint.activate([
-            birdsView.topAnchor.constraint(equalTo: bearsView.bottomAnchor, constant: bufferSize),
-            birdsView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5),
-            birdsView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -5),
-            birdsView.heightAnchor.constraint(equalToConstant: view.frame.height / 10)
-        ])
-        
-        let hogsView = ItemView(textForLabel: "Hogs")
-        view.addSubview(hogsView)
-        makeFontAndItemViewLayer(itemView: hogsView)
-        NSLayoutConstraint.activate([
-            hogsView.topAnchor.constraint(equalTo: birdsView.bottomAnchor, constant: bufferSize),
-            hogsView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5),
-            hogsView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -5),
-            hogsView.heightAnchor.constraint(equalToConstant: view.frame.height / 10)
-        ])
     }
     
     private func makeFontAndItemViewLayer(itemView: ItemView) {
@@ -136,7 +110,7 @@ extension ViewController {
         
         itemView.layer.borderWidth = 5
         itemView.layer.borderColor = UIColor.green.cgColor
-        itemView.layer.cornerRadius = view.frame.height / 40
+        itemView.layer.cornerRadius = view.frame.height / 30
     }
     
     private func makeTapGestureRecognizer() {
@@ -148,7 +122,7 @@ extension ViewController {
     }
     
     @objc private func handleTheTap(_ sender: UITapGestureRecognizer) {
-        for subview in view.subviews {
+        for subview in scrollView.subviews {
             if subview.frame.contains(sender.location(ofTouch: 0, in: view)) {
                 if let vc = storyboard?.instantiateViewController(withIdentifier: "SoundVC") as? SoundViewController {
                     

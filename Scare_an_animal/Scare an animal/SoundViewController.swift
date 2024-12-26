@@ -14,7 +14,9 @@ class SoundViewController: UIViewController, UIScrollViewDelegate {
     var tracksNames = [String]()
     var scrollView: UIScrollView!
 
-    override func viewDidLoad() {
+    override func loadView() {
+        super.loadView()
+        
         super.viewDidLoad()
         addSwipeGestureRecognizer()
         addScrollView()
@@ -22,7 +24,6 @@ class SoundViewController: UIViewController, UIScrollViewDelegate {
         for trackName in tracksNames {
             addSoundView(trackName: trackName)
         }
-        
     }
 }
 
