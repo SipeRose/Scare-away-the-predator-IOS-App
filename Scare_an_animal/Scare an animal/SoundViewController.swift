@@ -53,12 +53,7 @@ extension SoundViewController {
             )
         )
         
-        let contentSizeHeight: CGFloat
-        if tracksNames.count <= 8 {
-            contentSizeHeight = 0
-        } else {
-            contentSizeHeight = (view.bounds.width * 0.425) * (CGFloat(tracksNames.count) / 2)
-        }
+        let contentSizeHeight: CGFloat = (view.bounds.width * 0.425)  * CGFloat(tracksNames.count)
         
         scrollView.contentSize = CGSize(
             width: view.bounds.width,
@@ -69,40 +64,46 @@ extension SoundViewController {
     
     private func addSoundView(trackName: String) {
         
-        let soundView = SoundView()
+        let soundViewWidth = view.bounds.width * 0.9
+        let soundViewHeight = view.bounds.width * 0.4
+        let soundViewFrame = CGRect(
+            x: 0,
+            y: 0,
+            width: soundViewWidth,
+            height: soundViewHeight
+        )
+        
+        let soundView = SoundView(frame: soundViewFrame)
         scrollView.addSubview(soundView)
+        soundView.layer.borderWidth = 5
+        soundView.layer.borderColor = UIColor.systemBlue.cgColor
+        soundView.layer.cornerRadius = view.frame.height / 30
+        
         
         if soundViewsArrayCount == 0 {
             
             NSLayoutConstraint.activate([
-                soundView.heightAnchor.constraint(equalToConstant: view.bounds.width * 0.4),
-                soundView.widthAnchor.constraint(equalToConstant: view.bounds.width * 0.35),
+                soundView.heightAnchor.constraint(equalToConstant: soundView.frame.height),
+                soundView.widthAnchor.constraint(equalToConstant: soundView.frame.width),
                 soundView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-                soundView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: view.bounds.width * 0.1)
+                soundView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor)
             ])
             
         } else {
             
             let lastAddedSoundView = soundViewsArray.last!
             NSLayoutConstraint.activate([
-                soundView.heightAnchor.constraint(equalTo: lastAddedSoundView.heightAnchor),
-                soundView.widthAnchor.constraint(equalTo: lastAddedSoundView.widthAnchor)
+                soundView.heightAnchor.constraint(equalToConstant: soundView.frame.height),
+                soundView.widthAnchor.constraint(equalToConstant: soundView.frame.width),
+                soundView.topAnchor.constraint(equalTo: lastAddedSoundView.bottomAnchor, constant: view.bounds.width * 0.025),
+                soundView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor)
             ])
-            
-            if soundViewsArrayCount % 2 == 1 {
-                NSLayoutConstraint.activate([
-                    soundView.leadingAnchor.constraint(equalTo: lastAddedSoundView.trailingAnchor, constant: view.bounds.width * 0.1),
-                    soundView.topAnchor.constraint(equalTo: lastAddedSoundView.topAnchor)
-                ])
-            } else {
-                NSLayoutConstraint.activate([
-                    soundView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.1),
-                    soundView.topAnchor.constraint(equalTo: lastAddedSoundView.bottomAnchor, constant: view.bounds.width * 0.025)
-                ])
-            }
         }
         
+        
         soundView.addLabel(text: trackName)
+        soundView.addSoundDescriptionLabel()
+        
         soundViewsArray.append(soundView)
         soundViewsArrayCount += 1
         

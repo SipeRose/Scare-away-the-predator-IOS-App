@@ -13,12 +13,17 @@ class SoundView: UIView {
     static private var audioPlayer: AVAudioPlayer?
     static private var soundName = ""
     static private var tappedSoundView: SoundView?
-    private var nameOfSoundLabel: UILabel!
+    
+    var nameOfSoundLabel = UILabel()
+    private var imageView = UIImageView()
+    private var playingLabel = UILabel()
+    private var soundDescriptionLabel = UILabel()
 
-    init() {
-        super.init(frame: CGRect())
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         self.translatesAutoresizingMaskIntoConstraints = false
         addImageView()
+        addPlayingLabel()
         addTapGestureRecognizer()
     }
     
@@ -32,15 +37,16 @@ extension SoundView {
     
     private func addImageView() {
         
-        let imageView = UIImageView()
+        let constant = frame.width * 0.05
+        
         self.addSubview(imageView)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            imageView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            imageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 5),
-            imageView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.9),
-            imageView.heightAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.9)
+            imageView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -constant),
+            imageView.topAnchor.constraint(equalTo: self.topAnchor, constant: constant),
+            imageView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.3),
+            imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor)
         ])
 
         let image = UIImage(named: "SoundImage")
@@ -50,22 +56,65 @@ extension SoundView {
     
     func addLabel(text: String = "") {
         
-        nameOfSoundLabel = UILabel()
+        let constant = frame.width * 0.05
+        
         self.addSubview(nameOfSoundLabel)
         nameOfSoundLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            nameOfSoundLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            nameOfSoundLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor)
+            nameOfSoundLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: constant),
+            nameOfSoundLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: constant)
         ])
+        
+        let fontSize = (text.count > 18) ? (frame.width / 17) : (frame.width / 14)
 
         nameOfSoundLabel.font = UIFont(
-            name: "Apple Symbols",
-            size: superview!.bounds.width / 15
+            name: "BigCaslon",
+            size: fontSize
         )
         nameOfSoundLabel.text = text
-        nameOfSoundLabel.textColor = .black
+        nameOfSoundLabel.textColor = .blue
         
+    }
+    
+    private func addPlayingLabel() {
+        
+        let constant = frame.width * 0.01
+        
+        self.addSubview(playingLabel)
+        playingLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            playingLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: constant),
+            playingLabel.centerXAnchor.constraint(equalTo: imageView.centerXAnchor)
+        ])
+        
+        playingLabel.text = ""
+        playingLabel.textColor = .systemRed
+        playingLabel.font = UIFont(
+            name: "SystemFont",
+            size: frame.width / 23
+        )
+    }
+    
+    func addSoundDescriptionLabel() {
+        
+        let constant = frame.width * 0.01
+        
+        self.addSubview(soundDescriptionLabel)
+        soundDescriptionLabel.numberOfLines = 0
+        soundDescriptionLabel.font = UIFont(
+            name: "SystemFont",
+            size: frame.width / 20
+        )
+        soundDescriptionLabel.text = soundsDescription[nameOfSoundLabel.text!]
+        soundDescriptionLabel.textColor = .black
+        soundDescriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            soundDescriptionLabel.leadingAnchor.constraint(equalTo: nameOfSoundLabel.leadingAnchor),
+            soundDescriptionLabel.topAnchor.constraint(equalTo: nameOfSoundLabel.bottomAnchor, constant: constant)
+        ])
     }
     
     private func addTapGestureRecognizer() {
@@ -76,23 +125,23 @@ extension SoundView {
     @objc private func pressTheSoundButton() {
         
         guard let tappedSV = SoundView.tappedSoundView else {
-            addTapAnimation(newLabelColor: .systemRed)
+            addTapAnimation(isPlaying: true)
             playSound()
             return
         }
         
         if tappedSV != self {
-            addTapAnimation(newLabelColor: .systemRed)
+            addTapAnimation(isPlaying: true)
             SoundView.stopSound()
             playSound()
         } else {
-            addTapAnimation(newLabelColor: .black)
+            addTapAnimation(isPlaying: false)
             SoundView.stopSound()
         }
         
     }
     
-    private func addTapAnimation(newLabelColor: UIColor) {
+    private func addTapAnimation(isPlaying: Bool) {
         UIView.animate(withDuration: 0.1) {
             self.transform = CGAffineTransform(
                 scaleX: 0.9,
@@ -101,7 +150,11 @@ extension SoundView {
         }
         UIView.animate(withDuration: 0.2) {
             self.transform = CGAffineTransform.identity
-            self.nameOfSoundLabel.textColor = newLabelColor
+            if isPlaying {
+                self.playingLabel.text = "Playing"
+            } else {
+                self.playingLabel.text = ""
+            }
         }
     }
     
@@ -122,7 +175,7 @@ extension SoundView {
     
     static func stopSound() {
         
-        SoundView.tappedSoundView?.nameOfSoundLabel.textColor = .black
+        SoundView.tappedSoundView?.playingLabel.text = ""
         SoundView.tappedSoundView = nil
         
         guard let _ = SoundView.audioPlayer else { return }
