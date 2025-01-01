@@ -1,6 +1,8 @@
 # Scare an animal IOS App
 
-### Use different sounds that can scare away a certain type of predator to protect yourself. (Note: it is recommended to use with a loudspeaker to enhance the effect).
+### Use different sounds that can scare away a certain type of predator to protect yourself.
+
+#### Note: it is recommended to use with a loudspeaker to enhance the effect
 
 ###### Note: All sounds used in this application are found in open sources and are used solely for informational purposes to create this application. There are no guarantees of protection from wild animals.
 
