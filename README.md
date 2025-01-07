@@ -30,6 +30,7 @@ The effect of this idea is to make sounds that can scare away specific types of 
  * Switch between danger types by swipe to select other sounds
 
 ## Technologies
+ * MVC Architecture
  * UIKit
  * AVFoundation
  * Animation
