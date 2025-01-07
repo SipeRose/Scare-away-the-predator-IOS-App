@@ -8,6 +8,9 @@
 import UIKit
 import AVFoundation
 
+// MARK: SoundView
+// Contains a description of every type of sound and turns it on and off
+
 class SoundView: UIView {
     
     static private var audioPlayer: AVAudioPlayer?
@@ -22,6 +25,7 @@ class SoundView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.translatesAutoresizingMaskIntoConstraints = false
+        makeViewLayer()
         addImageView()
         addPlayingLabel()
         addTapGestureRecognizer()
@@ -34,6 +38,12 @@ class SoundView: UIView {
 }
 
 extension SoundView {
+    
+    private func makeViewLayer() {
+        layer.borderWidth  = 5
+        layer.borderColor  = UIColor.systemBlue.cgColor
+        layer.cornerRadius = frame.width / 15
+    }
     
     private func addImageView() {
         
@@ -49,12 +59,11 @@ extension SoundView {
             imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor)
         ])
 
-        let image = UIImage(named: "SoundImage")
-        imageView.image = image
+        imageView.image = UIImage(named: "SoundImage")
         
     }
     
-    func addLabel(text: String = "") {
+    func addTrackNameLabel(with trackName: String = "") {
         
         let constant = frame.width * 0.05
         
@@ -66,13 +75,13 @@ extension SoundView {
             nameOfSoundLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: constant)
         ])
         
-        let fontSize = (text.count > 18) ? (frame.width / 17) : (frame.width / 14)
+        let fontSize = (trackName.count > 18) ? (frame.width / 17) : (frame.width / 14)
 
         nameOfSoundLabel.font = UIFont(
             name: "BigCaslon",
             size: fontSize
         )
-        nameOfSoundLabel.text = text
+        nameOfSoundLabel.text = trackName
         nameOfSoundLabel.textColor = .blue
         
     }
@@ -113,24 +122,30 @@ extension SoundView {
         
         NSLayoutConstraint.activate([
             soundDescriptionLabel.leadingAnchor.constraint(equalTo: nameOfSoundLabel.leadingAnchor),
-            soundDescriptionLabel.topAnchor.constraint(equalTo: nameOfSoundLabel.bottomAnchor, constant: constant)
+            soundDescriptionLabel.topAnchor.constraint(equalTo: nameOfSoundLabel.bottomAnchor, constant: constant),
+            soundDescriptionLabel.trailingAnchor.constraint(equalTo: imageView.leadingAnchor)
         ])
     }
     
+// MARK: Tap gesture recognizer: activate the sound
+    
     private func addTapGestureRecognizer() {
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(pressTheSoundButton))
+        let tapGestureRecognizer = UITapGestureRecognizer(
+            target: self,
+            action: #selector(pressTheSoundButton)
+        )
         self.addGestureRecognizer(tapGestureRecognizer)
     }
     
     @objc private func pressTheSoundButton() {
         
-        guard let tappedSV = SoundView.tappedSoundView else {
+        guard let tappedView = SoundView.tappedSoundView else {
             addTapAnimation(isPlaying: true)
             playSound()
             return
         }
         
-        if tappedSV != self {
+        if tappedView != self {
             addTapAnimation(isPlaying: true)
             SoundView.stopSound()
             playSound()
@@ -140,6 +155,8 @@ extension SoundView {
         }
         
     }
+
+// MARK: Animation
     
     private func addTapAnimation(isPlaying: Bool) {
         UIView.animate(withDuration: 0.1) {
@@ -157,6 +174,8 @@ extension SoundView {
             }
         }
     }
+
+// MARK: Audio start and stop
     
     private func playSound() {
         
@@ -188,11 +207,9 @@ extension SoundView {
 }
 
 extension SoundView: AVAudioPlayerDelegate {
-    
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         if flag {
             SoundView.stopSound()
         }
     }
-    
 }

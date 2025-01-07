@@ -5,6 +5,8 @@
 //  Created by Никита Волков on 26.12.2024.
 //
 
+
+// A dictionary of sounds for individual enemy scaring
 let tracksForEveryDanger: [String: [String]] = [
     "Man": [
         "Angry Dog",

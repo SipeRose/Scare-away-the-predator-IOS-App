@@ -7,6 +7,9 @@
 
 import UIKit
 
+// MARK: SoundViewController
+// Includes SoundViews containing a description of each audio and activating the sounds
+
 class SoundViewController: UIViewController, UIScrollViewDelegate {
     
     private var soundViewsArray = [SoundView]()
@@ -16,29 +19,40 @@ class SoundViewController: UIViewController, UIScrollViewDelegate {
 
     override func loadView() {
         super.loadView()
-        
-        super.viewDidLoad()
+
         addSwipeGestureRecognizer()
         addScrollView()
-        
-        for trackName in tracksNames {
-            addSoundView(trackName: trackName)
-        }
+        addSoundViews()
     }
 }
 
+
+// MARK: Adding subviews and swipe gesture recognizer
+// Subviews:
+// - ScrollView as the container for SoundViews
+// - SoundViews
+
 extension SoundViewController {
     
-    private func addSwipeGestureRecognizer() {
-        let swipeFromLeftToRight = UISwipeGestureRecognizer(
-            target: self,
-            action: #selector(getToPreviousViewController)
-        )
-        swipeFromLeftToRight.direction = .right
-        self.view.addGestureRecognizer(swipeFromLeftToRight)
+    private func addSoundViews() {
+        for track in tracksNames {
+            makeSoundView(with: track)
+        }
     }
     
-    @objc private func getToPreviousViewController() {
+// MARK: Swipe Gesture Recognizer
+// For a swipe to return to EnemiesViewController
+    
+    private func addSwipeGestureRecognizer() {
+        let swipeFromLeftToTheRightGestureRecognizer = UISwipeGestureRecognizer(
+            target: self,
+            action: #selector(getToEnemiesViewController)
+        )
+        swipeFromLeftToTheRightGestureRecognizer.direction = .right
+        self.view.addGestureRecognizer(swipeFromLeftToTheRightGestureRecognizer)
+    }
+    
+    @objc private func getToEnemiesViewController() {
         SoundView.stopSound()
         navigationController?.popViewController(animated: true)
     }
@@ -48,7 +62,7 @@ extension SoundViewController {
             frame: CGRect(
                 x: 0,
                 y: 0,
-                width: view.bounds.width,
+                width:  view.bounds.width,
                 height: view.bounds.height
             )
         )
@@ -56,29 +70,27 @@ extension SoundViewController {
         let contentSizeHeight: CGFloat = (view.bounds.width * 0.425)  * CGFloat(tracksNames.count)
         
         scrollView.contentSize = CGSize(
-            width: view.bounds.width,
+            width:  view.bounds.width,
             height: contentSizeHeight
         )
         view.addSubview(scrollView)
     }
     
-    private func addSoundView(trackName: String) {
+    private func makeSoundView(with trackName: String) {
         
-        let soundViewWidth = view.bounds.width * 0.9
+        let soundViewWidth  = view.bounds.width * 0.9
         let soundViewHeight = view.bounds.width * 0.4
         let soundViewFrame = CGRect(
             x: 0,
             y: 0,
-            width: soundViewWidth,
+            width:  soundViewWidth,
             height: soundViewHeight
         )
         
         let soundView = SoundView(frame: soundViewFrame)
         scrollView.addSubview(soundView)
-        soundView.layer.borderWidth = 5
-        soundView.layer.borderColor = UIColor.systemBlue.cgColor
-        soundView.layer.cornerRadius = view.frame.height / 30
         
+// MARK: Layout
         
         if soundViewsArrayCount == 0 {
             
@@ -101,7 +113,7 @@ extension SoundViewController {
         }
         
         
-        soundView.addLabel(text: trackName)
+        soundView.addTrackNameLabel(with: trackName)
         soundView.addSoundDescriptionLabel()
         
         soundViewsArray.append(soundView)
